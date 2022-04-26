@@ -1,0 +1,17 @@
+{
+    "dev": {
+      "driver": "pg",
+      "host": "127.0.0.1",
+      "database": "lagos_lgas",
+      "user": "auto_user",
+      "password": "admin04"
+    },
+    "test": {
+      "driver": "pg",
+      "host": "127.0.0.1",
+      "database": "fantasy_worlds_test",
+      "user": "test_user",
+      "password": "password123"
+    }
+  }
+  
