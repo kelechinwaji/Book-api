@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const books_structure_1 = require("../models/books_structure");
+const user_1 = require("./user");
 const book = new books_structure_1.AdventureBookStore(); //this provides the methods for the database queries
 const index = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -23,7 +24,6 @@ const index = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(req.body);
         const addBook = {
             title: req.body.title,
             author: req.body.author,
@@ -32,7 +32,6 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             summary: req.body.summary,
         };
         const newBook = yield book.create(addBook);
-        console.log(newBook);
         res.json(newBook);
     }
     catch (error) {
@@ -62,8 +61,8 @@ const destroy = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 const adventure_book_routes = (app) => {
     app.get("/adventure-books", index);
     app.get("/adventure-books", show);
-    app.post("/adventure-books/", create);
-    app.put("/adventure-books/:id", update);
-    app.delete("/adventure-books/:id", destroy);
+    app.post("/adventure-books/", user_1.verifyAuthToken, create);
+    app.put("/adventure-books/:id", user_1.verifyAuthToken, update);
+    app.delete("/adventure-books/:id", user_1.verifyAuthToken, destroy);
 };
 exports.default = adventure_book_routes;

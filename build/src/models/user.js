@@ -18,6 +18,37 @@ const database_1 = __importDefault(require("../database"));
 const saltRounds = parseInt(process.env.SALT_ROUNDS);
 const pepper = process.env.BCRYPT_PASSWORD;
 class UserStore {
+    index() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const conn = yield database_1.default.connect();
+                const sql = "SELECT * FROM users";
+                const res = yield conn.query(sql);
+                conn.release();
+                console.log(res);
+                return res.rows;
+            }
+            catch (error) {
+                throw new Error(`could not get all from users ${error}`);
+            }
+        });
+    }
+    show(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const conn = yield database_1.default.connect();
+                const sql = "SELECT * FROM users WHERE id = ($1)";
+                const values = [id];
+                const res = yield conn.query(sql, values);
+                const item = res.rows[0];
+                conn.release();
+                return item;
+            }
+            catch (error) {
+                throw new Error(`could not find user with id ${id}`);
+            }
+        });
+    }
     create(user) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

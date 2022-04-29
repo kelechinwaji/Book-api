@@ -12,9 +12,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.verifyAuthToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const user_1 = require("../models/user");
 const store = new user_1.UserStore(); //this provides the methods for the database queries
+const index = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield store.index();
+        res.json(user);
+    }
+    catch (error) {
+        res.status(400);
+        res.json(error);
+    }
+});
+const show = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield store.show(req.params.id);
+        res.json(user);
+    }
+    catch (error) {
+        res.status(400);
+        res.json(error);
+    }
+});
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const addUser = {
         username: req.body.username,
@@ -34,7 +55,7 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 const authenticate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = {
         username: req.body.username,
-        password: req.body.password
+        password: req.body.password,
     };
     try {
         const authenticatedUser = yield store.authenticate(req.body.username, req.body.password);
@@ -47,11 +68,26 @@ const authenticate = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.json({ error });
     }
 });
+//@ts-ignore
+const verifyAuthToken = (req, res, next) => {
+    try {
+        const authorizationHeader = req.headers.authorization;
+        const token = authorizationHeader === null || authorizationHeader === void 0 ? void 0 : authorizationHeader.split(" ")[1];
+        //@ts-ignore
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SECRET);
+        next();
+    }
+    catch (error) {
+        res.status(401);
+        res.json({ error });
+    }
+};
+exports.verifyAuthToken = verifyAuthToken;
 const user_routes = (app) => {
-    // app.get("/adventure-books", index);
+    app.get("/users", index);
+    app.get("/users/:id", show);
     app.post("/login", authenticate);
-    app.post("/user", create);
-    // app.put("/adventure-books/:id", update);
+    app.post("/users", exports.verifyAuthToken, create);
     // app.delete("/adventure-books/:id", destroy);
 };
 exports.default = user_routes;
