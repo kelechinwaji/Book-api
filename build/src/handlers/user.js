@@ -86,8 +86,8 @@ exports.verifyAuthToken = verifyAuthToken;
 const user_routes = (app) => {
     app.get("/users", index);
     app.get("/users/:id", show);
-    app.post("/login", authenticate);
-    app.post("/users", exports.verifyAuthToken, create);
+    app.post("/login", exports.verifyAuthToken, authenticate);
+    app.post("/users", create);
     // app.delete("/adventure-books/:id", destroy);
 };
 exports.default = user_routes;

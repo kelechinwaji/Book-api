@@ -43,22 +43,26 @@ const show = async (req: Request, res: Response) => {
 
 const addProduct = async (req: Request, res: Response) => {
   try {
+      console.log(req.body, '', req.params);
+      
     const orderId = req.params.id;
     const productId = req.body.productId;
-    const quantity = req.body.quantity;
+    const quantity = parseInt(req.body.quantity);
     const addProduct = await store.addProduct(quantity, orderId, productId);
     res.json(addProduct);
   } catch (error) {
+      console.log(error);
+      
     res.status(400);
     res.json(error);
   }
 };
 
 const orderRoutes = (app: express.Application) => {
-  app.get("/orders", index);
-  app.get("/orders/:id", show);
-  app.post("/orders/", create);
-  app.post("/orders/:id/product", addProduct);
+  app.get("/orders", verifyAuthToken, index);
+  app.get("/orders/:id", verifyAuthToken, show);
+  app.post("/orders/", verifyAuthToken, create);
+  app.post("/orders/:id/product", verifyAuthToken, addProduct);
 };
 
 export default orderRoutes;

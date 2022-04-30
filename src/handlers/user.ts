@@ -78,8 +78,8 @@ export const verifyAuthToken = (req: Request, res: Response, next) => {
 const user_routes = (app: express.Application) => {
  app.get("/users", index);
  app.get("/users/:id", show);
-  app.post("/login", authenticate);
-  app.post("/users", verifyAuthToken, create);
+  app.post("/login", verifyAuthToken, authenticate);
+  app.post("/users", create);
   // app.delete("/adventure-books/:id", destroy);
 };
 
